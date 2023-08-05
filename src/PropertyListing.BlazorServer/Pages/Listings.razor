@@ -1,0 +1,69 @@
+﻿@page "/"
+@page "/propertylistings"
+@using BlazorServer.Data
+@inject PropertyListingService listingService
+
+<h3>PropertyListing</h3>
+
+<form>
+    <div class="row">
+        <div class="col">
+            <label class="control-label">Property Name</label>
+            <input class="form-control" @bind="@newProperty.PropertyName"/>
+        </div>
+        <div class="col">
+            <label class="control-label">Description</label>
+            <input class="form-control" @bind="@newProperty.Description"/>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="row">
+            <button class="btn btn-primary" @onclick="@CreateProperty">Add Property</button>
+        </div>
+    </div>
+</form>
+
+<hr />
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Property Name</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach(Property property in allProperties)
+        {
+            <tr>
+                <td>
+                    @property.PropertyName
+                </td>
+                <td>
+                    @property.Description
+                </td>
+            </tr>
+            
+        }
+    </tbody>
+</table>
+
+
+@code {
+    List<Property> allProperties = new List<Property>();
+
+    Property newProperty = new Property();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        allProperties = await listingService.GetProperties();
+    }
+
+    protected async void CreateProperty()
+    {
+        await listingService.AddPropertyAsync(newProperty);
+    }
+}
